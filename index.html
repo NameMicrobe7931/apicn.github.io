@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ik公益api接口</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #e0ffe0;
+            color: #2e7d32;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <h1>欢迎访问api.ikgy.top</h1>
+    <h2>本站api使用github+netlify分流</br>全部api使用亚 太cdn</br>api为自适应api接口</h2>
+    <h2 style="color: red;">请勿攻击此站点和api</h2>
+    <h2>国内接口</h2>
+    <button class="copyButton" data-key="0">js接口-点击 复制</button>
+    <h2>全球(国外)接口</h2>
+    <button class="copyButton" data-key="1">js接口-点击 复制</button>
+    <div id="status" class="status"></div>
+    <h2><a href="https://api.ikgy.top/api.php">演示站点</a></h2>
+
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=320 height=65 src="https://i.y.qq.com/n2/m/outchain/player/index.html?songid=424148254&songtype=0"></iframe>
+    <script>
+        (async () => {
+            const status = document.getElementById('status');
+            const fileContentCache = {}; // 缓存文件内容
+            const apiUrl = 'api.txt'; // 文件路径
+
+            // 获取文件内容
+            async function fetchFileContent() {
+                if (fileContentCache[apiUrl]) {
+                    return fileContentCache[apiUrl];
+                }
+
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`HTTP 错误! 状态: ${response.status}`);
+                    }
+                    const text = await response.text();
+                    fileContentCache[apiUrl] = text.split('\n'); // 按行分割文本
+                    return fileContentCache[apiUrl];
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            // 初始化按钮事件
+            document.querySelectorAll('.copyButton').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const lineIndex = parseInt(button.dataset.key);
+                    try {
+                        const lines = await fetchFileContent();
+                        if (lineIndex >= lines.length) {
+                            throw new Error('行号超出文 件范围');
+                        }
+
+                        const text = lines[lineIndex].trim();
+                        await navigator.clipboard.writeText(text);
+                        status.className = 'status success';
+                        status.textContent = `复制完成!`;
+                    } catch (error) {
+                        status.className = 'status error';
+                        status.textContent = `复制失败: ${error.message}`;
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
